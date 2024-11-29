@@ -19,7 +19,11 @@ from loguru import logger
 
 def get_zotero_corpus(id:str,key:str) -> list[dict]:
     zot = zotero.Zotero(id, 'user', key)
-    corpus = zot.everything(zot.items(itemType='conferencePaper || journalArticle || preprint'))
+    collections = zot.all_collections('DN5MH696')
+    collection_keys = [collection['data']['key'] for collection in collections]
+    corpus = []
+    for collection_key in collection_keys:
+        corpus += zot.everything(zot.collection_items(collection_key, itemType='conferencePaper || journalArticle || preprint'))
     corpus = [c for c in corpus if c['data']['abstractNote'] != '']
     return corpus
 
